@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajay Web Studio — Web Design for Local Businesses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #080a0e;
+    --surface: #0f1219;
+    --card: #131720;
+    --border: rgba(255,255,255,0.07);
+    --gold: #c9a96e;
+    --gold-light: #e8c98a;
+    --gold-dim: rgba(201,169,110,0.15);
+    --white: #f0ece4;
+    --muted: #6b6e7a;
+    --accent: #1a4a3a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(201,169,110,0.5);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.4s ease, width 0.3s, height 0.3s, opacity 0.3s;
+  }
+  body:hover .cursor { transform: translate(-50%, -50%); }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(to bottom, rgba(8,10,14,0.95), transparent);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold) !important;
+    padding: 8px 22px !important;
+    letter-spacing: 0.1em !important;
+    transition: background 0.3s, color 0.3s !important;
+  }
+  .nav-cta:hover { background: var(--gold) !important; color: var(--bg) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(201,169,110,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,169,110,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%);
+  }
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(26,74,58,0.25) 0%, transparent 70%);
+    top: 10%; left: -10%;
+    pointer-events: none;
+  }
+  .hero-glow-2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%);
+    bottom: 10%; right: 5%;
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
+    max-width: 1100px; margin: 0 auto; width: 100%;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 7vw, 7rem);
+    font-weight: 300;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+  .hero-title .outline {
+    -webkit-text-stroke: 1px rgba(201,169,110,0.4);
+    color: transparent;
+  }
+  .hero-sub {
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    font-weight: 400;
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 20px; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.65s forwards;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    padding: 14px 36px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: none;
+    transition: background 0.3s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-ghost {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 10px;
+    transition: color 0.3s;
+    cursor: none;
+  }
+  .btn-ghost:hover { color: var(--white); }
+  .btn-ghost span { font-size: 1.1em; }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px; right: 48px;
+    display: flex; align-items: center; gap: 12px;
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    writing-mode: vertical-lr;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+  .hero-scroll::after {
+    content: '';
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+
+  /* STATS STRIP */
+  .stats-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 32px 48px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+  .stat-item {
+    padding: 0 40px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+  .stat-label {
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* SECTION COMMON */
+  section { padding: 100px 48px; }
+  .section-max { max-width: 1200px; margin: 0 auto; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 20px;
+  }
+  .section-label::after {
+    content: '';
+    height: 1px; flex: 0 0 48px;
+    background: var(--gold);
+    opacity: 0.4;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .section-title em { font-style: italic; color: var(--gold-light); }
+
+  /* WORK / PROJECTS */
+  #work { background: var(--bg); }
+  .work-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .work-desc {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.8;
+    padding-top: 20px;
+  }
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+  }
+
+  .project-card {
+    background: var(--card);
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: none;
+    group: true;
+  }
+  .project-card:nth-child(1) { aspect-ratio: 16/9; grid-column: 1 / -1; }
+
+  .project-iframe-wrap {
+    position: absolute; inset: 0;
+    overflow: hidden;
+  }
+  .project-iframe-wrap iframe {
+    width: 200%;
+    height: 200%;
+    transform: scale(0.5);
+    transform-origin: top left;
+    border: none;
+    pointer-events: none;
+    filter: saturate(0.9) brightness(0.85);
+    transition: filter 0.5s ease;
+  }
+  .project-card:hover .project-iframe-wrap iframe {
+    filter: saturate(1) brightness(1);
+  }
+
+  .project-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,10,14,0.95) 0%, rgba(8,10,14,0.3) 50%, transparent 100%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 32px;
+    transition: background 0.4s;
+  }
+  .project-card:hover .project-overlay {
+    background: linear-gradient(to top, rgba(8,10,14,0.98) 0%, rgba(8,10,14,0.6) 60%, rgba(8,10,14,0.2) 100%);
+  }
+
+  .project-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.64rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .project-tag::before {
+    content: '';
+    width: 18px; height: 1px;
+    background: var(--gold);
+  }
+  .project-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .project-desc-text {
+    color: rgba(240,236,228,0.5);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    max-width: 480px;
+    height: 0; overflow: hidden;
+    transition: height 0.4s ease, opacity 0.4s;
+    opacity: 0;
+  }
+  .project-card:hover .project-desc-text {
+    height: 52px;
+    opacity: 1;
+  }
+  .project-link {
+    margin-top: 16px;
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .project-card:hover .project-link {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .project-link-arrow {
+    width: 28px; height: 28px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8em;
+    transition: background 0.3s;
+  }
+  .project-link:hover .project-link-arrow { background: var(--gold); color: var(--bg); }
+
+  /* PROJECT NUMBER */
+  .project-num {
+    position: absolute;
+    top: 20px; right: 24px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    font-weight: 300;
+    color: rgba(201,169,110,0.06);
+    line-height: 1;
+    pointer-events: none;
+    transition: color 0.4s;
+  }
+  .project-card:hover .project-num { color: rgba(201,169,110,0.12); }
+
+  /* SERVICES */
+  #services {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 60px;
+  }
+  .service-card {
+    background: var(--card);
+    padding: 44px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .service-card:hover { background: #161c27; }
+  .service-icon {
+    width: 44px; height: 44px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 28px;
+    transition: background 0.3s;
+  }
+  .service-card:hover .service-icon { background: var(--gold-dim); }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 14px;
+    color: var(--white);
+  }
+  .service-text {
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.75;
+  }
+  .service-corner {
+    position: absolute; bottom: 28px; right: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--gold);
+    opacity: 0.5;
+    letter-spacing: 0.1em;
+  }
+
+  /* PROCESS */
+  #process { background: var(--bg); }
+  .process-steps {
+    margin-top: 64px;
+    display: flex; flex-direction: column; gap: 0;
+    border: 1px solid var(--border);
+  }
+  .process-step {
+    display: grid;
+    grid-template-columns: 100px 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 40px 0;
+    transition: background 0.3s;
+  }
+  .process-step:last-child { border-bottom: none; }
+  .process-step:hover { background: rgba(201,169,110,0.02); }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: rgba(201,169,110,0.2);
+    text-align: center;
+    padding: 0 20px;
+    border-right: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-info {
+    padding: 0 48px;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .step-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.64rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .step-desc {
+    padding: 0 48px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.75;
+    display: flex; align-items: center;
+  }
+
+  /* CTA */
+  #contact {
+    background: var(--surface);
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .cta-inner { max-width: 700px; margin: 0 auto; }
+  .cta-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+  }
+  .cta-eyebrow::before, .cta-eyebrow::after {
+    content: ''; height: 1px; width: 40px;
+    background: var(--gold); opacity: 0.4;
+  }
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+  .cta-title em { font-style: italic; color: var(--gold-light); }
+  .cta-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 48px;
+  }
+  .cta-buttons {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  }
+  .btn-outline {
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 13px 32px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: none;
+    transition: border-color 0.3s, color 0.3s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg);
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+  .footer-copy {
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+  .footer-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    opacity: 0.5;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scrollLine {
+    0%, 100% { transform: scaleY(1); opacity: 1; }
+    50% { transform: scaleY(0.3); opacity: 0.3; }
+  }
+
+  /* REVEAL ANIMATIONS */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* MOBILE */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    .hero-title { font-size: 3.2rem; }
+    .stats-strip { grid-template-columns: repeat(2,1fr); padding: 20px 24px; gap: 1px; background: var(--border); }
+    .stat-item { padding: 20px; border-right: none; background: var(--surface); }
+    section { padding: 64px 24px; }
+    .work-intro { grid-template-columns: 1fr; gap: 24px; }
+    .project-grid { grid-template-columns: 1fr; }
+    .project-card:nth-child(1) { grid-column: 1; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-step { grid-template-columns: 60px 1fr; }
+    .step-desc { display: none; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Ajay Web Studio</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Based in Hyderabad, India — Available Worldwide</div>
+    <h1 class="hero-title">
+      Websites that <em>elevate</em><br>
+      local <span class="outline">businesses</span>
+    </h1>
+    <p class="hero-sub">
+      I design and develop premium, fast-loading websites for salons, gyms, spas, and service businesses — built to attract customers and grow your brand online.
+    </p>
+    <div class="hero-actions">
+      <a href="#work" class="btn-primary">View My Work</a>
+      <a href="#contact" class="btn-ghost">Start a Project <span>→</span></a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip reveal">
+  <div class="stat-item">
+    <div class="stat-num">4+</div>
+    <div class="stat-label">Projects Delivered</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Custom Built</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">48hr</div>
+    <div class="stat-label">Avg Turnaround</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Revisions Included</div>
+  </div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <div class="section-max">
+    <div class="work-intro reveal">
+      <div>
+        <div class="section-label">Selected Work</div>
+        <h2 class="section-title">Crafted for<br><em>real businesses</em></h2>
+      </div>
+      <p class="work-desc">
+        Each project is built from scratch — no templates, no shortcuts. From elegant salon websites to high-energy gym pages, every site is tailored to attract the right customers and convert visitors into bookings.
+      </p>
+    </div>
+
+    <div class="project-grid reveal">
+
+      <!-- Project 1 — SALON (featured) -->
+      <div class="project-card">
+        <div class="project-iframe-wrap">
+          <iframe src="https://ajaywebstudio.github.io/salon/" title="Salon Website" loading="lazy" scrolling="no"></iframe>
+        </div>
+        <div class="project-num">01</div>
+        <div class="project-overlay">
+          <div class="project-tag">Hair &amp; Beauty</div>
+          <div class="project-name">Luxe Hair Salon</div>
+          <div class="project-desc-text">A sophisticated, dark-luxury website for an upscale hair salon — featuring online booking, services showcase, and elegant typography.</div>
+          <a href="https://ajaywebstudio.github.io/salon/" target="_blank" class="project-link">
+            Visit Live Site
+            <span class="project-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Project 2 — GYM -->
+      <div class="project-card">
+        <div class="project-iframe-wrap">
+          <iframe src="https://ajaywebstudio.github.io/gym/" title="Gym Website" loading="lazy" scrolling="no"></iframe>
+        </div>
+        <div class="project-num">02</div>
+        <div class="project-overlay">
+          <div class="project-tag">Fitness &amp; Gym</div>
+          <div class="project-name">Power Gym</div>
+          <div class="project-desc-text">Bold, high-energy design built to convert visitors into members — with class schedules, pricing, and trainer profiles.</div>
+          <a href="https://ajaywebstudio.github.io/gym/" target="_blank" class="project-link">
+            Visit Live Site
+            <span class="project-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Project 3 — BARBER -->
+      <div class="project-card">
+        <div class="project-iframe-wrap">
+          <iframe src="https://ajaywebstudio.github.io/barber/" title="Barber Website" loading="lazy" scrolling="no"></iframe>
+        </div>
+        <div class="project-num">03</div>
+        <div class="project-overlay">
+          <div class="project-tag">Barbershop</div>
+          <div class="project-name">The Barber Co.</div>
+          <div class="project-desc-text">Classic yet modern barbershop site with service menu, gallery, and appointment booking that drives real walk-ins.</div>
+          <a href="https://ajaywebstudio.github.io/barber/" target="_blank" class="project-link">
+            Visit Live Site
+            <span class="project-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Project 4 — SPA -->
+      <div class="project-card">
+        <div class="project-iframe-wrap">
+          <iframe src="https://ajaywebstudio.github.io/spa/" title="Spa Website" loading="lazy" scrolling="no"></iframe>
+        </div>
+        <div class="project-num">04</div>
+        <div class="project-overlay">
+          <div class="project-tag">Wellness &amp; Spa</div>
+          <div class="project-name">Serenity Spa</div>
+          <div class="project-desc-text">Calm, premium spa website evoking relaxation — with treatment menus, gift vouchers, and a tranquil visual identity.</div>
+          <a href="https://ajaywebstudio.github.io/spa/" target="_blank" class="project-link">
+            Visit Live Site
+            <span class="project-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-max">
+    <div class="reveal">
+      <div class="section-label">What I Offer</div>
+      <h2 class="section-title">Everything your<br>business <em>needs online</em></h2>
+    </div>
+
+    <div class="services-grid reveal">
+      <div class="service-card">
+        <div class="service-icon">🎨</div>
+        <div class="service-name">Custom Web Design</div>
+        <p class="service-text">Every website is designed from scratch to match your brand identity — no templates. Beautiful, unique designs that make you stand out from competitors.</p>
+        <div class="service-corner">01 / 06</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">⚡</div>
+        <div class="service-name">Fast Development</div>
+        <p class="service-text">Clean, fast-loading code optimised for mobile and desktop. Your site will score high on Google PageSpeed and load instantly for customers.</p>
+        <div class="service-corner">02 / 06</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📱</div>
+        <div class="service-name">Mobile-First Build</div>
+        <p class="service-text">Over 70% of customers find local businesses on their phone. Every site I build looks stunning and works perfectly on all screen sizes.</p>
+        <div class="service-corner">03 / 06</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🔍</div>
+        <div class="service-name">SEO Foundation</div>
+        <p class="service-text">Built-in SEO best practices so your business shows up on Google when customers search for services in your area.</p>
+        <div class="service-corner">04 / 06</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📅</div>
+        <div class="service-name">Booking Integration</div>
+        <p class="service-text">Online appointment booking, contact forms, and WhatsApp integrations — make it effortless for customers to reach you and book instantly.</p>
+        <div class="service-corner">05 / 06</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🛠</div>
+        <div class="service-name">Ongoing Support</div>
+        <p class="service-text">Post-launch updates, content changes, and technical support. I'm here after delivery to make sure everything keeps running perfectly.</p>
+        <div class="service-corner">06 / 06</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-max">
+    <div class="reveal">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">Simple, smooth<br><em>process</em></h2>
+    </div>
+
+    <div class="process-steps reveal">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <div class="step-info">
+          <div class="step-tag">Discovery</div>
+          <div class="step-title">Understanding Your Business</div>
+        </div>
+        <div class="step-desc">We start with a conversation about your goals, target customers, competitors, and visual preferences. I gather everything needed to design the perfect website for your business.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <div class="step-info">
+          <div class="step-tag">Design &amp; Build</div>
+          <div class="step-title">Creating Your Website</div>
+        </div>
+        <div class="step-desc">I design and build your complete website — typically within 48–72 hours. You'll see the full design before anything goes live, with room for feedback and changes.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <div class="step-info">
+          <div class="step-tag">Review</div>
+          <div class="step-title">Your Feedback, Refined</div>
+        </div>
+        <div class="step-desc">Review the design and request any changes. I include unlimited revisions until you're 100% happy. Nothing goes live without your approval.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <div class="step-info">
+          <div class="step-tag">Launch</div>
+          <div class="step-title">Go Live &amp; Start Growing</div>
+        </div>
+        <div class="step-desc">Your site goes live on your domain. I handle the technical setup and stay available for support. Your business is now open online, 24/7.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / CONTACT -->
+<section id="contact">
+  <div class="cta-inner reveal">
+    <div class="cta-eyebrow">Let's Work Together</div>
+    <h2 class="cta-title">Ready to grow<br>your <em>business online?</em></h2>
+    <p class="cta-sub">
+      Whether you're starting from scratch or looking to upgrade an outdated site, I'd love to help. Reach out and let's talk about what you need.
+    </p>
+    <div class="cta-buttons">
+      <a href="mailto:ajaywebstudio1@gmail.com" class="btn-primary">📧 Email Me</a>
+      <a href="https://wa.me/" class="btn-outline">💬 WhatsApp</a>
+      <a href="#work" class="btn-outline">View More Work</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Ajay Web Studio</div>
+  <div class="footer-copy">© 2026 Ajay Web Studio. All rights reserved.</div>
+  <div class="footer-tagline">Hyderabad, India</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+  });
+
+  function animateRing() {
+    rx += (mx - rx - 18) * 0.12;
+    ry += (my - ry - 18) * 0.12;
+    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .project-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform += ' scale(2)';
+      ring.style.width = '60px';
+      ring.style.height = '60px';
+      ring.style.opacity = '0.5';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.opacity = '1';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Nav active scroll
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 80) {
+      nav.style.background = 'rgba(8,10,14,0.97)';
+    } else {
+      nav.style.background = 'linear-gradient(to bottom, rgba(8,10,14,0.95), transparent)';
+    }
+  });
+</script>
+</body>
+</html>
