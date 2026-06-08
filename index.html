@@ -656,6 +656,23 @@
     body { cursor: auto; }
     .cursor, .cursor-ring { display: none; }
   }
+
+ /* ── FLOATING WA ── */
+  .wa-float {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #25d366; color: white; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; box-shadow: 0 4px 20px rgba(37,211,102,.5);
+    transition: var(--transition); cursor: pointer; border: none;
+  }
+  .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,.65); }
+  .wa-tooltip {
+    position: fixed; bottom: 28px; right: 94px; z-index: 9998;
+    background: var(--navy); color: white; padding: 10px 16px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500; white-space: nowrap;
+    box-shadow: var(--shadow-md); opacity: 0; pointer-events: none; transition: var(--transition);
+  }
+  .wa-float:hover + .wa-tooltip, .wa-tooltip:hover { opacity: 1; }
 </style>
 </head>
 <body>
@@ -949,6 +966,8 @@
       <a href="#work" class="btn-outline">View More Work</a>
     </div>
   </div>
+ <button class="wa-float" onclick="openWhatsApp()" aria-label="Chat on WhatsApp">💬</button>
+
 </section>
 
 <!-- FOOTER -->
